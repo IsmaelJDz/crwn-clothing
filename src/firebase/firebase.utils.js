@@ -8,7 +8,33 @@ const config = {
   projectId: 'crwn-db-c5d01',
   storageBucket: 'crwn-db-c5d01.appspot.com',
   messagingSenderId: '294892317343',
-  appId: '1:294892317343:web:551e45cc68d118404810aa',
+  appId: '1:294892317343:web:551e45cc68d118404810aa'
+};
+
+export const createUserProfileDocument = async (userAuth, addtionalData) => {
+  if (!userAuth) return;
+
+  const userRef = firestore.doc(`users/${userAuth.uid}`);
+
+  const snapShop = await userRef.get();
+
+  if (!snapShop.exists) {
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
+
+    try {
+      await userRef.set({
+        displayName,
+        email,
+        createdAt,
+        ...addtionalData
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  return userRef;
 };
 
 firebase.initializeApp(config);
@@ -18,7 +44,7 @@ export const firestore = firebase.firestore();
 
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({
-  prompt: 'select_account',
+  prompt: 'select_account'
 });
 
 export const signInWithGoogle = () => auth.signInWithPopup(provider);
