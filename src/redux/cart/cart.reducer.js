@@ -34,6 +34,13 @@ const cartReducer = (state = INITIAL_STATE, action) => {
         )
       };
 
+    case CartActionsTypes.CLEAR_CART:
+      localStorage.removeItem('persist:root');
+      return {
+        ...state,
+        cartItems: []
+      };
+
     default:
       return state;
   }
